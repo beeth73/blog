@@ -1,4 +1,4 @@
-# blog# beeth73 // log
+# blog beeth73 // log
 
 > "Deconstructing concepts to reconstruct understanding."
 
