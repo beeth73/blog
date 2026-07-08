@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>beeth73 | log</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <!-- [NAV] Simple, accessible navigation -->
+    <nav id="main-nav">
+        <a href="index.html">~/home</a>
+        <a href="?list=all">~/posts</a>
+    </nav>
+
+    <!-- [CONTENT] Where the WASM-rendered HTML is injected -->
+    <main id="content-bridge">
+        <!-- Loader shown while WASM and MD are being fetched -->
+        <div id="loader">Initializing Engine...</div>
+    </main>
+
+    <!-- [SCRIPTS] Vanilla Logic -->
+    <script src="assets/js/wasm_loader.js" type="module"></script>
+    <script src="assets/js/app.js" type="module"></script>
+</body>
+</html>
