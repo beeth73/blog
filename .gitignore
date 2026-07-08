@@ -1,0 +1,10 @@
+# Workspace Drafts (Personal thoughts/unfinished logs)
+drafts/
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Build artifacts (if you ever add them)
+node_modules/
+dist/
