@@ -1,0 +1,39 @@
+# Engineering Journal // beeth73
+
+> A record of design choices, technical pivots, and the evolution of the `beeth73/blog` engine.
+
+## 📜 The Core Philosophy
+- **VanillaJS Maxxing:** No frameworks. The goal is to master the DOM and Web APIs.
+- **WASM Implementation:** Only used when computationally necessary or for architectural interest. 
+- **Human Content:** AI is a tool for code/infrastructure; personal expression remains 100% human-authored.
+
+## 🎨 Design Vision (Current Phase: Research)
+- **Concept:** "The Digital Kindle."
+- **Goal:** Minimize eye strain. Avoid the "terminal" cliché. 
+- **Details:** 
+    - Soft, off-white/cream background (Paper-like).
+    - High-quality Serif typography for long-form reading (e.g., *Merriweather* or *Playfair Display*).
+    - Focus on white space and "breathing room" for the text.
+
+## 🏗 Architectural Decisions
+- **[2026-07-09] Content Addressing:** Chose a Markdown-to-HTML flow to separate "content" (MD) from "engine" (JS/WASM).
+- **[2026-07-09] The WASM Void:** Left `/wasm` folder empty intentionally. Plans to write a `.wat` (WebAssembly Text) file manually later to understand the binary translation layer, rather than just using a black-box compiler.
+- **[2026-07-09] Flat-File Database:** Using `sitemap.json` to avoid the need for a backend or heavy database queries.
+
+## 📝 Content Backlog (Topic Ideas)
+- [ ] **WASM:** From `.wat` to `.wasm` - My journey into the binary.
+- [ ] **IPFS:** The "Hydra" of the web and why the police can't stop a hash.
+- [ ] **VanillaJS:** Why I deleted `node_modules` and found my soul.
+- [ ] **OSINT:** The art of finding anything without a trace.
+- [ ] **LLM Guardrails:** The battle between creative freedom and corporate safety.
+- [ ] **Linux/Dual-boot:** A guide for those still trapped in the Windows ecosystem.
+- [ ] **Tor:** Beyond the "Dark Web" - A tool for true digital sovereignty.
+
+## ✅ To-Do List
+- [ ] Finalize CSS variables for the "Kindle" theme.
+- [ ] Write the `wasm_loader.js` to handle async instantiation.
+- [ ] Research the most efficient `.wat` structure for string manipulation.
+- [ ] Write the "Genesis" post (Post #000).
+
+---
+*Next entry: Finalizing the UI Shell.*
