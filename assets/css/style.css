@@ -1,0 +1,338 @@
+/* ==========================================================================
+   THE ENGINE WORKBENCH & THE MIDNIGHT LIBRARY
+   CSS Architecture by beeth73
+   ========================================================================== */
+
+/* --- 1. Theming & Variables --- */
+
+:root, 
+[data-theme="light"] {
+    /* The Library (Day Mode): Warm paper, sepia undertones, charcoal ink */
+    --bg-color: #f7f3ea; 
+    --text-main: #3a3a38; 
+    --text-muted: #6b6a63;
+    --accent: #a1673f; /* Muted sienna */
+    --accent-hover: #7d4f30;
+    --border-color: #e0d9c7;
+    --code-bg: #ece7da;
+    --focus-ring: #a1673f;
+
+    /* Typography */
+    --font-body: 'Edu VIC WA NT Hand', cursive;
+    --font-heading: 'Playfair Display', serif;
+    --font-ui: 'Google Sans Code', monospace;
+    --font-mono: 'Fira Code', monospace;
+}
+
+[data-theme="dark"] {
+    /* The Workbench (Night Mode): Deep slate, e-ink grey, amber terminal glow */
+    --bg-color: #1a1a1a; 
+    --text-main: #e0e0e0; /* Soft, non-blinding grey */
+    --text-muted: #888888;
+    --accent: #d79921; /* Warm amber (Gruvbox inspired) */
+    --accent-hover: #fabd2f;
+    --border-color: #333333;
+    --code-bg: #242424;
+    --focus-ring: #d79921;
+}
+
+/* --- 2. Base & Reset --- */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    font-size: 1.125rem; /* 18px base */
+    line-height: 1.8; /* Generous line height for the handwriting font */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme switch */
+    
+    /* Font rendering optimization */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    
+    /* Layout */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- 3. Accessibility (A11y) --- */
+
+/* Skip Link for Keyboard Users */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--accent);
+    color: var(--bg-color);
+    padding: 8px 16px;
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    z-index: 100;
+    transition: top 0.2s ease;
+    text-decoration: none;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Global Focus Outline: Replaces blurry default blue rings with crisp aesthetics */
+*:focus-visible {
+    outline: 2px dashed var(--focus-ring);
+    outline-offset: 4px;
+}
+
+/* --- 4. Navigation (The Terminal UI) --- */
+
+.site-header {
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.5rem 2rem;
+    font-family: var(--font-ui);
+}
+
+#main-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-item {
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 0.95rem;
+    letter-spacing: -0.02em;
+    transition: color 0.2s ease;
+}
+
+.nav-item:hover {
+    color: var(--accent);
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    transition: color 0.2s ease;
+}
+
+.theme-toggle:hover {
+    color: var(--accent);
+}
+
+/* --- 5. Main Content (The Journal Engine) --- */
+
+#content-bridge {
+    flex: 1;
+    width: 100%;
+    max-width: 65ch; /* The golden ratio for reading width */
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+}
+
+/* Loader Animation */
+.loader {
+    font-family: var(--font-ui);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+.blinking-cursor {
+    font-weight: bold;
+    color: var(--accent);
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* --- 6. Typography Output (Future WASM Injections) --- */
+/* These styles anticipate the HTML your WASM engine will eventually inject */
+
+#content-bridge h1, 
+#content-bridge h2, 
+#content-bridge h3 {
+    font-family: var(--font-heading);
+    color: var(--text-main);
+    font-weight: 600;
+    line-height: 1.3;
+    margin-top: 2em;
+    margin-bottom: 0.75em;
+}
+
+#content-bridge h1 {
+    font-size: 2.5rem;
+    margin-top: 0;
+}
+
+#content-bridge p {
+    font-size: 1.25rem; /* Larger base to make handwriting font legible */
+    margin-bottom: 1.5em;
+    color: var(--text-main);
+}
+
+#content-bridge a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--accent);
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+#content-bridge a:hover {
+    color: var(--accent-hover);
+    border-bottom: 1px solid var(--accent-hover);
+}
+
+#content-bridge blockquote {
+    border-left: 3px solid var(--accent);
+    padding-left: 1.5em;
+    margin: 2em 0;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+
+/* ==========================================================================
+   CODE BLOCK CARDS (Progressive Enhancement)
+   ========================================================================== */
+
+.code-block-card {
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--code-bg);
+    margin: 2rem 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.code-block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    background-color: var(--bg-color); /* Matches theme background for dynamic tab feel */
+    border-bottom: 1px solid var(--border-color);
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    user-select: none;
+}
+
+.code-lang {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.code-icon {
+    font-weight: bold;
+    color: var(--accent);
+}
+
+.lang-text {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+/* Copy Button Styling */
+.copy-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.copy-btn:hover {
+    color: var(--text-main);
+    background-color: var(--border-color);
+}
+
+.copy-btn.copied {
+    color: var(--accent);
+}
+
+/* Code container adjustments */
+.code-block-card pre {
+    background: none !important; /* Strips old pre styling */
+    border: none !important;
+    margin: 0 !important;
+    padding: 1.25rem !important;
+    overflow-x: auto;
+}
+
+.code-block-card code {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-main);
+    display: block;
+    line-height: 1.5;
+}
+
+/* --- 7. Footer --- */
+
+.site-footer {
+    text-align: center;
+    padding: 2rem 1.5rem;
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border-color);
+    margin-top: 2rem;
+}
+
+.wasm-badge {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+/* --- 8. Responsive Design --- */
+
+@media (max-width: 600px) {
+    #content-bridge h1 {
+        font-size: 2rem;
+    }
+    
+    #content-bridge {
+        padding: 2rem 1.25rem;
+    }
+    
+    .site-header {
+        padding: 1rem 1.25rem;
+    }
+}

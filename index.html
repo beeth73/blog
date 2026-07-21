@@ -1,26 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>beeth73 | log</title>
+    
+    <meta name="description" content="Engineering journal and WebAssembly engine by Bhushan Ladgaonkar.">
+    <meta name="theme-color" content="#f7f3ea" id="meta-theme-color">
+
+    <!-- Preconnect to Google Fonts for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- 
+      Typography System:
+      - Edu VIC WA NT Hand (Body / The Human)
+      - Playfair Display (Titles / The Elegance)
+      - Fira Code & Google Sans Code (UI, Code / The Machine)
+    -->
+    <link href="https://fonts.googleapis.com/css2?family=Edu+VIC+WA+NT+Hand:wght@400..700&family=Fira+Code:wght@300..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Google+Sans+Code:wght@400..700&display=swap" rel="stylesheet">
+
+    <!-- CSS Engine -->
     <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- 
+      A11y & UX: Prevent Flash of Incorrect Theme (FOIT) 
+      This executes synchronously before the body paints.
+    -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme === 'dark' || (!savedTheme && prefersDark) ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            
+            // Adjust meta theme color for mobile browsers
+            const metaColor = theme === 'dark' ? '#1a1a1a' : '#f7f3ea';
+            document.getElementById('meta-theme-color').setAttribute('content', metaColor);
+        })();
+    </script>
 </head>
 <body>
 
-    <!-- [NAV] Simple, accessible navigation -->
-    <nav id="main-nav">
-        <a href="index.html">~/home</a>
-        <a href="?list=all">~/posts</a>
-    </nav>
+    <!-- [A11y] Skip to content link for keyboard navigators -->
+    <a href="#content-bridge" class="skip-link">Skip to main content</a>
+
+    <!-- [HEADER & NAV] The Terminal UI -->
+    <header class="site-header">
+        <nav id="main-nav" aria-label="Primary Navigation">
+            <div class="nav-links">
+                <a href="index.html" class="nav-item">~/home</a>
+                <a href="?list=all" class="nav-item">~/posts</a>
+            </div>
+            
+            <!-- Theme Toggle Button -->
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
+                <span class="toggle-icon" aria-hidden="true">[moon]</span>
+            </button>
+        </nav>
+    </header>
 
     <!-- [CONTENT] Where the WASM-rendered HTML is injected -->
-    <main id="content-bridge">
-        <!-- Loader shown while WASM and MD are being fetched -->
-        <div id="loader">Initializing Engine...</div>
+    <!-- tabindex="-1" allows the skip-link to correctly focus this container -->
+    <main id="content-bridge" tabindex="-1">
+        
+        <!-- aria-live="polite" tells screen readers to announce changes in this element -->
+        <div id="loader" class="loader" role="status" aria-live="polite">
+            <span class="loader-text">Initializing Engine...</span>
+            <span class="blinking-cursor" aria-hidden="true">_</span>
+        </div>
+        
     </main>
 
-    <!-- [SCRIPTS] Vanilla Logic -->
+    <!-- [FOOTER] -->
+    <footer class="site-footer">
+        <p>rendered via <span class="wasm-badge">.wat</span> // engineered by beeth73</p>
+    </footer>
+
+    <!-- [SCRIPTS] Vanilla Logic. type="module" automatically defers execution until DOM is parsed. -->
     <script src="assets/js/wasm_loader.js" type="module"></script>
     <script src="assets/js/app.js" type="module"></script>
 </body>
