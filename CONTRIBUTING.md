@@ -68,5 +68,3 @@ Your commit messages should follow this format:
 
 We look forward to collaborating!
 ```
-
----
