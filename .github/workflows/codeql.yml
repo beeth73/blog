@@ -1,13 +1,13 @@
-name: "CodeQL Advanced (Hardened)"
+name: "CodeQL Advanced (DEFCON Hardened)"
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  workflow_dispatch: # Allows manual trigger from the GitHub Actions UI
+  workflow_dispatch: # Allows manual execution from the Actions tab on-demand
 
-# Set global zero-trust defaults: block all permissions by default
+# Strict Zero-Trust Defaults: Block all API permissions globally
 permissions: {}
 
 jobs:
@@ -15,35 +15,32 @@ jobs:
     name: CodeQL Static Analysis (JS/TS)
     runs-on: ubuntu-latest
     
-    # Strictly define only the minimal permissions required for this job
+    # Strictly define the absolute bare-minimum permissions required to run
     permissions:
-      contents: read             # Required to checkout and read the repository
-      security-events: write     # Required to upload the SARIF scan results to GitHub Security
-
-    strategy:
-      fail-fast: false
+      contents: read             # Required to checkout and read repository files
+      security-events: write     # Required to upload the resulting SARIF scanning report
 
     steps:
     # 1. Checkout Repository
-    # Pinned to actions/checkout v4.2.2 commit SHA for absolute supply-chain safety
+    # Pinned to actions/checkout v4.2.2 SHA
     - name: Checkout repository
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       with:
-        persist-credentials: false # Security best practice: don't leave git credentials on the runner
+        persist-credentials: false # Threat reduction: Do not persist GitHub tokens on the runner
 
-    # 2. Initialize CodeQL Scan Environment
-    # Pinned to github/codeql-action v4.37.1 commit SHA
+    # 2. Initialize CodeQL Compiler Environment
+    # Pinned to github/codeql-action/init v4.37.1 SHA (Sub-action isolated)
     - name: Initialize CodeQL
       uses: github/codeql-action/init@df31c35ab213d8530b0a62722336d898938340b2 # v4.37.1
       with:
         languages: javascript-typescript
-        build-mode: none # JS/TS is interpreted; no build compile needed
+        build-mode: none 
         
-        # Strictest standard: Run advanced security queries and deep code-quality suites
+        # Threat Modeling: Scan against deep semantic flaws, logic vulnerabilities, and code quality issues
         queries: security-extended,security-and-quality
 
     # 3. Execute Analysis & Publish Report
-    # Pinned to github/codeql-action/analyze v4.37.1 commit SHA
+    # Pinned to github/codeql-action/analyze v4.37.1 SHA (Sub-action isolated)
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@df31c35ab213d8530b0a62722336d898938340b2 # v4.37.1
       with:
