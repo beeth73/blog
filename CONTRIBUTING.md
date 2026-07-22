@@ -67,4 +67,3 @@ Your commit messages should follow this format:
 5. Submit a **Pull Request** detailing your architectural decisions.
 
 We look forward to collaborating!
-```
