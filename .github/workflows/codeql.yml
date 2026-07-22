@@ -1,0 +1,50 @@
+name: "CodeQL Advanced (Hardened)"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: # Allows manual trigger from the GitHub Actions UI
+
+# Set global zero-trust defaults: block all permissions by default
+permissions: {}
+
+jobs:
+  analyze:
+    name: CodeQL Static Analysis (JS/TS)
+    runs-on: ubuntu-latest
+    
+    # Strictly define only the minimal permissions required for this job
+    permissions:
+      contents: read             # Required to checkout and read the repository
+      security-events: write     # Required to upload the SARIF scan results to GitHub Security
+
+    strategy:
+      fail-fast: false
+
+    steps:
+    # 1. Checkout Repository
+    # Pinned to actions/checkout v4.2.2 commit SHA for absolute supply-chain safety
+    - name: Checkout repository
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      with:
+        persist-credentials: false # Security best practice: don't leave git credentials on the runner
+
+    # 2. Initialize CodeQL Scan Environment
+    # Pinned to github/codeql-action v4.37.1 commit SHA
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@df31c35ab213d8530b0a62722336d898938340b2 # v4.37.1
+      with:
+        languages: javascript-typescript
+        build-mode: none # JS/TS is interpreted; no build compile needed
+        
+        # Strictest standard: Run advanced security queries and deep code-quality suites
+        queries: security-extended,security-and-quality
+
+    # 3. Execute Analysis & Publish Report
+    # Pinned to github/codeql-action/analyze v4.37.1 commit SHA
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@df31c35ab213d8530b0a62722336d898938340b2 # v4.37.1
+      with:
+        category: "/language:javascript-typescript"
