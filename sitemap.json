@@ -1,6 +1,13 @@
 {
   "posts": [
     {
+      "id": "cia-triad",
+      "title": "CIA Triad",
+      "date": "2026-07-22",
+      "description": "An introductory summary of the core pillars of cybersecurity, expanded with Authentication and Non-Repudiation.",
+      "path": "posts/cia_triad.md"
+    },
+    {
       "id": "wasm-engine-memory-model",
       "title": "Building a Markdown Engine in Pure .wat",
       "date": "2026-07-21",

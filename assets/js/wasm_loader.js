@@ -58,13 +58,17 @@ async function initWasm() {
  * Main export: Takes raw markdown, bridges it to WASM if available, 
  * or uses the fallback parser.
  */
-export async function parseMarkdownWasm(rawMarkdown) {
+export async function parseMarkdownWasm(markdown) {
     await initWasm();
 
     if (isWasmReady && wasmInstance.exports.parse) {
-        return executeWasmParser(rawMarkdown);
+        // 1. Run the structural WASM engine
+        const wasmHtml = executeWasmParser(markdown);
+        
+        // 2. Pass the output through the progressive inline polisher
+        return postProcessInlineMarkdown(wasmHtml);
     } else {
-        return executeJsFallbackParser(rawMarkdown);
+        return executeJsFallbackParser(markdown);
     }
 }
 
@@ -139,4 +143,26 @@ function executeJsFallbackParser(markdown) {
     }).join('\n');
 
     return html;
+}
+
+/**
+ * Progressive Enhancement: Leverages the browser's native C++ regex compiler
+ * to quickly parse inline style markers on the returned WASM string.
+ */
+function postProcessInlineMarkdown(html) {
+    let processed = html;
+
+    // 1. Triple bold-italic: ***text*** -> <strong><em>text</em></strong>
+    processed = processed.replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>');
+
+    // 2. Bold: **text** -> <strong>text</strong>
+    processed = processed.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+    // 3. Inline Code: `text` -> <code>text</code>
+    processed = processed.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+    // 4. Links: [text](url) -> <a href="url">text</a>
+    processed = processed.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+
+    return processed;
 }

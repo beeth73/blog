@@ -168,9 +168,18 @@ async function renderPost(slug, posts) {
 // --- 4. DOM Injection & A11y Focus Management ---
 
 function renderHTML(htmlContent) {
-    contentBridge.innerHTML = htmlContent;
+    const renderer = document.getElementById('article-renderer');
     
-    // Sweep the DOM and style code blocks dynamically
+    // Inject only inside the sandbox, preserving the sliders!
+    renderer.innerHTML = htmlContent;
+    
+    // 1. Tag the first paragraph for the Drop-Cap
+    const firstP = renderer.querySelector('.markdown-body p');
+    if (firstP) {
+        firstP.classList.add('opening');
+    }
+    
+    // 2. Style code blocks dynamically
     polishCodeBlocks();
     
     contentBridge.focus();
@@ -253,6 +262,89 @@ function polishCodeBlocks() {
         wrapper.appendChild(pre); // Moves the original <pre> inside the wrapper
     });
 }
+
+
+// ==========================================================================
+// INTERACTIVE WORKSPACE ENGINE
+// Handling Drag-to-Resize Margins & Proportional Font Scaling
+// ==========================================================================
+
+// --- 1. Font Size Scaling Controller ---
+
+let fontScale = parseFloat(localStorage.getItem('font-scale')) || 1.0;
+document.documentElement.style.setProperty('--font-scale', fontScale);
+
+const btnIncrease = document.getElementById('font-increase');
+const btnDecrease = document.getElementById('font-decrease');
+
+btnIncrease.addEventListener('click', () => {
+    if (fontScale < 1.4) { // Absolute safety cap for maximum readability
+        fontScale += 0.05;
+        updateFontScale(fontScale);
+    }
+});
+
+btnDecrease.addEventListener('click', () => {
+    if (fontScale > 0.8) { // Absolute safety floor for minimum legibility
+        fontScale -= 0.05;
+        updateFontScale(fontScale);
+    }
+});
+
+function updateFontScale(scale) {
+    document.documentElement.style.setProperty('--font-scale', scale);
+    localStorage.setItem('font-scale', scale);
+}
+
+// --- 2. Symmetric Drag-to-Resize Margin Controller ---
+
+const sliderLeft = document.getElementById('slider-left');
+const sliderRight = document.getElementById('slider-right');
+
+// Load saved custom width on startup
+const savedWidth = localStorage.getItem('content-max-width');
+if (savedWidth) {
+    document.documentElement.style.setProperty('--content-max-width', savedWidth);
+}
+
+// We use PointerEvents so dragging works flawlessly on both Mouse and Touch screens
+sliderLeft.addEventListener('pointerdown', startDrag);
+sliderRight.addEventListener('pointerdown', startDrag);
+
+function startDrag(event) {
+    event.preventDefault();
+    
+    // Set pointer capture to handle mouse exiting the boundary handle during fast drags
+    event.target.setPointerCapture(event.pointerId);
+    
+    const onPointerMove = (moveEvent) => {
+        const viewportCenterX = window.innerWidth / 2;
+        
+        // Symmetric math: calculate distance from center of screen to active cursor
+        const halfWidth = Math.abs(moveEvent.clientX - viewportCenterX);
+        let totalWidth = halfWidth * 2;
+        
+        // Guardrails: Bound custom width between 400px and 92% of the viewport
+        const minLimit = 400;
+        const maxLimit = window.innerWidth * 0.92;
+        
+        if (totalWidth < minLimit) totalWidth = minLimit;
+        if (totalWidth > maxLimit) totalWidth = maxLimit;
+        
+        document.documentElement.style.setProperty('--content-max-width', `${totalWidth}px`);
+        localStorage.setItem('content-max-width', `${totalWidth}px`);
+    };
+    
+    const onPointerUp = (upEvent) => {
+        event.target.releasePointerCapture(upEvent.pointerId);
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', onPointerUp);
+    };
+    
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+}
+
 
 // --- Boot Sequence ---
 

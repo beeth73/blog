@@ -1,23 +1,28 @@
 /* ==========================================================================
-   THE ENGINE WORKBENCH & THE MIDNIGHT LIBRARY
-   CSS Architecture by beeth73
+   THE MIDNIGHT LIBRARY & THE WORKBENCH — COMPLETE WORKSTATION DESIGN SYSTEM
+   Author: beeth73 // Technical Journal
+   Vibe: "Drafting Manual Meets Vintage Newspaper" (Fully Interactive)
    ========================================================================== */
 
-/* --- 1. Theming & Variables --- */
+/* --- 1. Global Variables & Design Tokens --- */
 
 :root, 
 [data-theme="light"] {
-    /* The Library (Day Mode): Warm paper, sepia undertones, charcoal ink */
+    /* Day Mode colors */
     --bg-color: #f7f3ea; 
     --text-main: #3a3a38; 
     --text-muted: #6b6a63;
-    --accent: #a1673f; /* Muted sienna */
+    --accent: #a1673f;          
     --accent-hover: #7d4f30;
     --border-color: #e0d9c7;
     --code-bg: #ece7da;
     --focus-ring: #a1673f;
 
-    /* Typography */
+    /* Typographic Proportional Scaling Engine */
+    --font-scale: 1.0;          /* Controlled dynamically by JS */
+    --font-size-base: calc(1.125rem * var(--font-scale));
+
+    /* Typography System */
     --font-body: 'Edu VIC WA NT Hand', cursive;
     --font-heading: 'Playfair Display', serif;
     --font-ui: 'Google Sans Code', monospace;
@@ -25,11 +30,11 @@
 }
 
 [data-theme="dark"] {
-    /* The Workbench (Night Mode): Deep slate, e-ink grey, amber terminal glow */
+    /* Night Mode colors */
     --bg-color: #1a1a1a; 
-    --text-main: #e0e0e0; /* Soft, non-blinding grey */
+    --text-main: #e0e0e0;       
     --text-muted: #888888;
-    --accent: #d79921; /* Warm amber (Gruvbox inspired) */
+    --accent: #d79921;          
     --accent-hover: #fabd2f;
     --border-color: #333333;
     --code-bg: #242424;
@@ -44,7 +49,6 @@
     padding: 0;
 }
 
-
 html {
     scroll-behavior: smooth;
 }
@@ -53,9 +57,8 @@ body {
     background-color: var(--bg-color);
     color: var(--text-main);
     font-family: var(--font-body);
-    font-size: 1.125rem; /* 18px base */
-    line-height: 1.8; /* Generous line height for the handwriting font */
-    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme switch */
+    font-size: var(--font-size-base); /* Scaled proportionally */
+    transition: background-color 0.3s ease, color 0.3s ease;
     
     /* Font rendering optimization */
     -webkit-font-smoothing: antialiased;
@@ -89,13 +92,18 @@ body {
     top: 0;
 }
 
-/* Global Focus Outline: Replaces blurry default blue rings with crisp aesthetics */
+/* Global Focus Outline */
 *:focus-visible {
     outline: 2px dashed var(--focus-ring);
     outline-offset: 4px;
 }
 
-/* --- 4. Navigation (The Terminal UI) --- */
+/* Removes outline specifically on the focused article container */
+#content-bridge {
+    outline: none;
+}
+
+/* --- 4. Navigation & Layout Controls --- */
 
 .site-header {
     border-bottom: 1px solid var(--border-color);
@@ -107,8 +115,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 900px;
+    width: 60%;
+    max-width: var(--content-max-width, 760px); /* Dynamically scales with the sliders! */
     margin: 0 auto;
+    transition: max-width 0.1s ease;
 }
 
 .nav-links {
@@ -128,6 +138,30 @@ body {
     color: var(--accent);
 }
 
+.nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.font-control {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.font-control:hover {
+    color: var(--accent);
+    background-color: var(--border-color);
+}
+
 /* Theme Toggle Button */
 .theme-toggle {
     background: none;
@@ -144,14 +178,44 @@ body {
     color: var(--accent);
 }
 
-/* --- 5. Main Content (The Journal Engine) --- */
+/* --- 5. Main Content Container (The Drafting Column) --- */
 
 #content-bridge {
     flex: 1;
-    width: 100%;
-    max-width: 65ch; /* The golden ratio for reading width */
+    width: 60%;
+    max-width: var(--content-max-width, 760px); /* Dynamically controlled by JS dragging */
+    min-width: 320px;
     margin: 0 auto;
-    padding: 3rem 1.5rem;
+    padding: 3rem 2.5rem;       
+    position: relative;         /* Needed to bound absolute positioned sliders */
+    border-left: 1px dashed var(--border-color);
+    border-right: 1px dashed var(--border-color);
+}
+
+/* Draggable Column Sliders */
+.column-slider {
+    position: absolute;
+    top: -14px;
+    font-family: var(--font-ui);
+    color: var(--accent);
+    font-size: 1.35rem;
+    cursor: col-resize;         /* Visual indicator for horizontal resizing */
+    user-select: none;          /* Prevents text selection highlighting during drags */
+    z-index: 100;
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.column-slider:hover {
+    color: var(--accent-hover);
+    transform: scale(1.3);
+}
+
+#slider-left {
+    left: -6px;                 /* Centers exactly on the left dashed border line */
+}
+
+#slider-right {
+    right: -7px;                /* Centers exactly on the right dashed border line */
 }
 
 /* Loader Animation */
@@ -174,36 +238,109 @@ body {
     50% { opacity: 0; }
 }
 
-/* --- 6. Typography Output (Future WASM Injections) --- */
-/* These styles anticipate the HTML your WASM engine will eventually inject */
+/* --- 6. Typography Output (The Master Book Design) --- */
 
-#content-bridge h1, 
-#content-bridge h2, 
+/* --- 6.1 Base Paragraph Rhythm --- */
+#content-bridge p {
+    font-size: calc(1.25rem * var(--font-scale)); /* Proportionally Scaled */
+    line-height: 2.15;              /* Generous vertical air for handwriting */
+    letter-spacing: 0.012em;        /* Prevents loops from colliding */
+    word-spacing: 0.06em;           /* Keeps words bound tightly as phrases */
+    margin-bottom: 2rem;
+    color: var(--text-main);
+    text-rendering: optimizeLegibility;
+
+    /* The Printed Page Grid */
+    text-align: justify;
+    text-justify: inter-word;       
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphenate-limit-chars: 6 3 3;   
+
+    /* Widows & Orphans */
+    orphans: 3;
+    widows: 3;
+    max-width: 100%;
+}
+
+/* --- 6.2 Newspaper Title Banner (Overrides inline app.js styles) --- */
+#content-bridge article header {
+    text-align: center !important;
+    border-top: 1px solid var(--border-color) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    padding: 2.5rem 0 !important;
+    margin-top: 1rem !important;
+    margin-bottom: 3.5rem !important;
+}
+
+#content-bridge article header h1 {
+    font-family: var(--font-heading) !important;
+    font-size: calc(2.85rem * var(--font-scale)) !important; /* Scaled */
+    text-align: center !important;
+    margin: 0 0 0.75rem 0 !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1.2 !important;
+    color: var(--text-main) !important;
+}
+
+#content-bridge article header div {
+    text-align: center !important;
+    font-family: var(--font-ui) !important;
+    color: var(--text-muted) !important;
+    font-size: 0.85rem !important;
+    letter-spacing: 0.05em !important;
+}
+
+/* Sub-headings within text */
+#content-bridge h2,
 #content-bridge h3 {
     font-family: var(--font-heading);
     color: var(--text-main);
     font-weight: 600;
-    line-height: 1.3;
-    margin-top: 2em;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    margin-top: 2.2em;
     margin-bottom: 0.75em;
+    text-align: left;               /* Headings are never justified */
+    orphans: 2;
+    widows: 2;
 }
 
-#content-bridge h1 {
-    font-size: 2.5rem;
-    margin-top: 0;
+#content-bridge h2 {
+    font-size: calc(1.85rem * var(--font-scale)); /* Scaled */
 }
 
-#content-bridge p {
-    font-size: 1.25rem; /* Larger base to make handwriting font legible */
-    margin-bottom: 1.5em;
-    color: var(--text-main);
+#content-bridge h3 {
+    font-size: calc(1.4rem * var(--font-scale));  /* Scaled */
+    font-weight: 700;
 }
 
+/* --- 6.3 The Drop Cap --- */
+#content-bridge p.opening {
+    text-align: left;               /* Left-align around the cap prevents gaps */
+    hyphens: none;
+}
+
+#content-bridge p.opening::first-letter {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    float: left;
+    line-height: 0.82;
+    font-size: 4.2em;               /* Perfect 3-4 line height ratio */
+    padding-right: 0.09em;
+    padding-top: 0.08em;
+    margin-bottom: -0.08em;
+    color: var(--accent);           /* Custom rubication */
+}
+
+/* --- 6.4 Inline Elements: Links & Emphasis --- */
 #content-bridge a {
     color: var(--accent);
     text-decoration: none;
     border-bottom: 1px dotted var(--accent);
     transition: color 0.2s ease, border-color 0.2s ease;
+    white-space: normal;
 }
 
 #content-bridge a:hover {
@@ -211,18 +348,37 @@ body {
     border-bottom: 1px solid var(--accent-hover);
 }
 
+/* --- 6.5 Blockquote Rhythm --- */
 #content-bridge blockquote {
     border-left: 3px solid var(--accent);
     padding-left: 1.5em;
     margin: 2em 0;
     color: var(--text-muted);
     font-style: italic;
+    text-align: left;
+    hyphens: none;
+    line-height: 1.75;
+    orphans: 2;
+    widows: 2;
 }
 
+/* --- 6.6 Bullet Points and Lists --- */
+#content-bridge ul, 
+#content-bridge ol {
+    margin-bottom: 1.8rem;
+    padding-left: 1.5rem;
+}
 
-/* ==========================================================================
-   CODE BLOCK CARDS (Progressive Enhancement)
-   ========================================================================== */
+#content-bridge li {
+    font-size: calc(1.25rem * var(--font-scale)); /* Scaled */
+    line-height: 2.15;              
+    letter-spacing: 0.02em;
+    word-spacing: 0.08em;
+    margin-bottom: 0.75rem;
+    color: var(--text-main);
+}
+
+/* --- 7. Code Block Cards (Progressive Enhancement) --- */
 
 .code-block-card {
     border: 1px solid var(--border-color);
@@ -239,7 +395,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 0.6rem 1rem;
-    background-color: var(--bg-color); /* Matches theme background for dynamic tab feel */
+    background-color: var(--bg-color); 
     border-bottom: 1px solid var(--border-color);
     font-family: var(--font-ui);
     font-size: 0.8rem;
@@ -264,7 +420,6 @@ body {
     font-weight: 600;
 }
 
-/* Copy Button Styling */
 .copy-btn {
     background: none;
     border: none;
@@ -287,9 +442,8 @@ body {
     color: var(--accent);
 }
 
-/* Code container adjustments */
 .code-block-card pre {
-    background: none !important; /* Strips old pre styling */
+    background: none !important;
     border: none !important;
     margin: 0 !important;
     padding: 1.25rem !important;
@@ -304,7 +458,7 @@ body {
     line-height: 1.5;
 }
 
-/* --- 7. Footer --- */
+/* --- 8. Footer --- */
 
 .site-footer {
     text-align: center;
@@ -321,18 +475,45 @@ body {
     font-weight: 600;
 }
 
-/* --- 8. Responsive Design --- */
+/* --- 9. Responsive Design --- */
 
-@media (max-width: 600px) {
-    #content-bridge h1 {
-        font-size: 2rem;
+@media (max-width: 768px) {
+    #main-nav {
+        width: 92%;
+        max-width: 100% !important; /* Standardizes header width on mobile viewport */
     }
     
     #content-bridge {
+        width: 92%;
         padding: 2rem 1.25rem;
+        
+        /* Hide layout borders and registration marks on mobile to maximize space */
+        border-left: none;
+        border-right: none;
     }
-    
-    .site-header {
-        padding: 1rem 1.25rem;
+
+    #content-bridge::before,
+    #content-bridge::after {
+        display: none;                  /* Hides physical sliders on mobile */
+    }
+
+    /* Fallback to left-align on mobile to prevent awkward spacing gaps */
+    #content-bridge p {
+        text-align: left;
+        hyphens: auto;
+    }
+
+    #content-bridge p.opening::first-letter {
+        font-size: 3.2em;
+    }
+}
+
+@media (max-width: 600px) {
+    #content-bridge h1 {
+        font-size: 2rem !important;
+    }
+
+    #content-bridge {
+        padding: 2rem 1.25rem;
     }
 }
