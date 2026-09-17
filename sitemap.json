@@ -6,27 +6,6 @@
       "date": "2026-07-22",
       "description": "An introductory summary of the core pillars of cybersecurity, expanded with Authentication and Non-Repudiation.",
       "path": "posts/cia_triad.md"
-    },
-    {
-      "id": "wasm-engine-memory-model",
-      "title": "Building a Markdown Engine in Pure .wat",
-      "date": "2026-07-21",
-      "description": "Skipping Rust and C to write WebAssembly Text directly. Notes on passing linear memory arrays to Vanilla JS.",
-      "path": "posts/wasm_engine_memory_model.md"
-    },
-    {
-      "id": "midnight-library-workbench",
-      "title": "The Midnight Library & The Workbench",
-      "date": "2026-07-18",
-      "description": "Pivoting the UI architecture: blending cozy, handwritten Dark Academia aesthetics with a glowing terminal backbone.",
-      "path": "posts/midnight_library_workbench.md"
-    },
-    {
-      "id": "vanillajs-maxxing-philosophy",
-      "title": "VanillaJS Maxxing: A Philosophy",
-      "date": "2026-07-15",
-      "description": "Why I'm building this log with zero frameworks, zero build steps, and absolute engineering intentionality.",
-      "path": "posts/vanillajs_maxxing_philosophy.md"
     }
   ]
 }
