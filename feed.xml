@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>beeth73 // log</title>
+    <link>https://blog.bhushanladgaonkar.me</link>
+    <description>Writing corner by Bhushan Ladgaonkar (Beeth73) — Systems, tech, automotive, and art.</description>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 22 Jul 2026 00:00:00 GMT</lastBuildDate>
+    <atom:link href="https://blog.bhushanladgaonkar.me/feed.xml" rel="self" type="application/rss+xml" />
+
+    <!-- Post 1: CIA Triad -->
+    <item>
+      <title>CIA Triad</title>
+      <link>https://blog.bhushanladgaonkar.me/?post=cia-triad</link>
+      <guid isPermaLink="true">https://blog.bhushanladgaonkar.me/?post=cia-triad</guid>
+      <pubDate>Wed, 22 Jul 2026 00:00:00 GMT</pubDate>
+      <description>An introductory summary of the core pillars of cybersecurity, expanded with Authentication and Non-Repudiation.</description>
+    </item>
+
+  </channel>
+</rss>
