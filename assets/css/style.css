@@ -41,6 +41,47 @@
     --focus-ring: #d79921;
 }
 
+/* --- Font Family Switching Engine --- */
+[data-font="hand"] {
+    --font-body: 'Edu VIC WA NT Hand', cursive;
+    --body-line-height: 2.2;
+    --body-word-spacing: 0.35em;       /* Generous visible gap between words */
+    --body-letter-spacing: 0.04em;     /* Adds a slight gap between individual letters */
+}
+
+/* Specific engine override for the handwriting font */
+[data-font="hand"] #content-bridge,
+[data-font="hand"] #content-bridge p,
+[data-font="hand"] #content-bridge h1,
+[data-font="hand"] #content-bridge li {
+    word-spacing: 0.35em !important;
+    letter-spacing: 0.03em !important;
+    /* Disables cursive stroke bleeding across space characters: */
+    font-variant-ligatures: no-contextual !important;
+    font-feature-settings: "calt" 0, "liga" 0 !important;
+}
+
+[data-font="serif"] {
+    --font-body: 'Playfair Display', Georgia, serif;
+    --body-line-height: 1.8;
+    --body-word-spacing: 0.02em;
+    --body-letter-spacing: normal;
+}
+
+[data-font="mono"] {
+    --font-body: 'Fira Code', monospace;
+    --body-line-height: 1.75;
+    --body-word-spacing: normal;
+    --body-letter-spacing: -0.01em;
+}
+
+[data-font="sans"] {
+    --font-body: 'Google Sans Code', -apple-system, sans-serif;
+    --body-line-height: 1.75;
+    --body-word-spacing: normal;
+    --body-letter-spacing: normal;
+}
+
 /* --- 2. Base & Reset --- */
 
 * {
@@ -242,23 +283,19 @@ body {
 
 /* --- 6.1 Base Paragraph Rhythm --- */
 #content-bridge p {
-    font-size: calc(1.25rem * var(--font-scale)); /* Proportionally Scaled */
-    line-height: 2.15;              /* Generous vertical air for handwriting */
-    letter-spacing: 0.012em;        /* Prevents loops from colliding */
-    word-spacing: 0.06em;           /* Keeps words bound tightly as phrases */
+    font-size: calc(1.25rem * var(--font-scale));
+    line-height: var(--body-line-height, 2.0); 
+    letter-spacing: var(--body-letter-spacing, 0.015em);
+    word-spacing: var(--body-word-spacing, 0.16em); /* Generous breathing room between words */
     margin-bottom: 2rem;
     color: var(--text-main);
     text-rendering: optimizeLegibility;
 
-    /* The Printed Page Grid */
-    text-align: justify;
-    text-justify: inter-word;       
+    /* Fixed: Left-align preserves consistent natural word gaps */
+    text-align: left;
     hyphens: auto;
     -webkit-hyphens: auto;
-    -ms-hyphens: auto;
-    hyphenate-limit-chars: 6 3 3;   
 
-    /* Widows & Orphans */
     orphans: 3;
     widows: 3;
     max-width: 100%;
@@ -510,7 +547,12 @@ body {
 
 @media (max-width: 600px) {
     #content-bridge h1 {
-        font-size: 2rem !important;
+    font-family: var(--font-heading) !important; /* Always stays Playfair Display */
+    font-size: calc(2.4rem * var(--font-scale)) !important;
+    line-height: 1.25 !important;
+    margin-bottom: 2rem !important;
+    color: var(--text-main) !important;
+    text-align: left !important;
     }
 
     #content-bridge {

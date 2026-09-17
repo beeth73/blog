@@ -37,6 +37,36 @@ function initTheme() {
     });
 }
 
+// --- Font Family Switcher Engine ---
+
+function initFontSwitcher() {
+    const fonts = ['hand', 'serif', 'mono', 'sans'];
+    const fontToggleBtn = document.getElementById('font-family-toggle');
+    const fontLabel = document.getElementById('font-family-label');
+
+    // Load saved font preference or default to 'hand'
+    const savedFont = localStorage.getItem('font-preference') || 'hand';
+    applyFont(savedFont);
+
+    if (fontToggleBtn) {
+        fontToggleBtn.addEventListener('click', () => {
+            const currentFont = document.documentElement.getAttribute('data-font') || 'hand';
+            const nextIndex = (fonts.indexOf(currentFont) + 1) % fonts.length;
+            const nextFont = fonts[nextIndex];
+
+            applyFont(nextFont);
+            localStorage.setItem('font-preference', nextFont);
+        });
+    }
+
+    function applyFont(fontName) {
+        document.documentElement.setAttribute('data-font', fontName);
+        if (fontLabel) {
+            fontLabel.textContent = `[font: ${fontName}]`;
+        }
+    }
+}
+
 function updateThemeUI(theme) {
     if (theme === 'dark') {
         toggleIcon.textContent = '[sun]';
@@ -366,7 +396,7 @@ function startDrag(event) {
 
 
 // --- Boot Sequence ---
-
 console.log("%c[Engine Init] Booting beeth73 terminal...", "color: #d79921; font-family: monospace;");
 initTheme();
+initFontSwitcher(); // <--- ADD THIS LINE
 router();
