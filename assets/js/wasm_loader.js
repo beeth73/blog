@@ -128,6 +128,10 @@ function executeJsFallbackParser(markdown) {
     // 4. Blockquotes (> Quote)
     html = html.replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>');
 
+    // Add this RIGHT BEFORE step 5 (Links):
+    // 4.5. Images (![Alt](URL))
+    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto; margin: 1.5rem 0; border-radius: 4px;">');
+
     // 5. Links ([Title](URL))
     html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
 
@@ -161,6 +165,9 @@ function postProcessInlineMarkdown(html) {
     // 3. Inline Code: `text` -> <code>text</code>
     processed = processed.replace(/`([^`]+)`/g, '<code>$1</code>');
 
+    // Add right before step 4 (Links):
+    processed = processed.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto; margin: 1.5rem 0; border-radius: 4px;">');
+    
     // 4. Links: [text](url) -> <a href="url">text</a>
     processed = processed.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
 

@@ -68,10 +68,34 @@ async function fetchRawMarkdown(path) {
     return await response.text();
 }
 
+
+async function renderHome() {
+    try {
+        document.title = "beeth73 | ~/home";
+
+        // 1. Re-use your existing fetch helper
+        const markdown = await fetchRawMarkdown('home.md');
+
+        // 2. Await the WASM parser so it returns the actual HTML string
+        const htmlOutput = await parseMarkdownWasm(markdown);
+
+        // 3. Wrap in markdown-body so all your custom CSS applies
+        const finalDOM = `
+            <div class="markdown-body">
+                ${htmlOutput}
+            </div>
+        `;
+
+        // 4. Use your existing render engine helper
+        renderHTML(finalDOM);
+    } catch (err) {
+        renderHTML(`<h1>Kernel Panic</h1><p>Error: ${err.message}</p>`);
+    }
+}
+
 // --- 3. Routing & Rendering ---
 
 async function router() {
-    // We use URLSearchParams for clean routing: ?post=slug or ?list=all
     const params = new URLSearchParams(window.location.search);
     const viewList = params.get('list');
     const postSlug = params.get('post');
@@ -84,13 +108,8 @@ async function router() {
         } else if (postSlug) {
             await renderPost(postSlug, sitemap.posts);
         } else {
-            // Default home view: Show the most recent post, or a welcome message
-            if (sitemap.posts.length > 0) {
-                // Assuming posts are sorted newest first in sitemap.json
-                await renderPost(sitemap.posts[0].id, sitemap.posts); 
-            } else {
-                renderHTML(`<h1>~/home</h1><p>The filesystem is empty.</p>`);
-            }
+            // Default home view: Load home.md instead of the first post!
+            await renderHome();
         }
     } catch (error) {
         renderHTML(`<h1>Kernel Panic</h1><p>Error: ${error.message}</p>`);
