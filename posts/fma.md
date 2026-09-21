@@ -5,6 +5,11 @@ In those days, we really believed that to be the world's one and only truth."
 
 I think everyone who watched Fullmetal Alchemist has this quote spoken by Alphonse Elric in the intro ingrained in their minds, but as Al says "In those days" it does get debunked.
 
+![Poster of Fullmetal Alchemist containing Edward and Alphonse,](assets/images/FMA_Poster.jpg)
+
+
+If you are curious about this then head to the following which is also source of this image [imdb.com](https://www.imdb.com/title/tt0421357/mediaviewer/rm1374488833/?ref_=tt_ov_i)
+
 We are talking about Fullmetal Alchemist Anime from 2003, not to be confused with Fullmetal Alchemist: Brotherhood released in 2009 which is as we all know true to the manga and doesn't have a weird ending of FMA which I really didn't appreciate much.
 
 So before we go into what's equivalent exchange or meaning of life, let's first get into FMA. As Al said repeatedly throughout the series I am not Fullmetal he is i.e. Edward Elric a prodigious Alchemist born to Trisha Elric and a Father just like the series I'm letting you know he exists but will only introduce him if and when he is required. One day their father goes and never returns, and eventually their mother also dies thus two boys becoming orphans. and they then try to revive their mother in which Ed first pays his left leg & whole Al which gets sucked into the GATE, the gate also gives Ed great knowledge and then he takes soul of Al out of the gate and tie it to an armour during this time he pays via right hand. So Al in armour takes him to Pinako and Winry Rockbell where Ed gets automail (prosthetic) arm and leg, Later Roy Mustang the Flame Alchemist arrives and for rest of the story watch the Anime.
