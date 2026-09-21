@@ -7,5 +7,13 @@
       "description": "An introductory summary of the core pillars of cybersecurity, expanded with Authentication and Non-Repudiation.",
       "path": "posts/cia_triad.md"
     }
+
+    {
+      "id": "fullmetal-alchemist-review",
+      "title": "FullMetal Alchemist (2003) Review",
+      "date": "2026-09-21",
+      "description": "A review of Fullmetal Alchemist (2003)",
+      "path": "posts/fma.md"
+    }
   ]
 }
