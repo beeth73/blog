@@ -8,6 +8,8 @@ So What's CIA Triad what does it stand for what does it mean?
 * **I** : Intefrity
 * **A** : Availability
 
+![Architectural diagram explaining the CIA Triad with Authentication and Non-Repudiation](assets/images/cia_triad_diagram.png)
+
 **Confidentiality** : We need to make sure what's supposed to be private is always yes that includes you `API_KEYS` which you forgot to save in `.env`, and also not make a `.gitignore`, but more than that keeping trade secrets safe, user and employee info which they entrust in you, no one wants their Phone Number, Social Security Number, Address, etc. to be publicly available in the hands of an OSINT.
 
 **Integrity** : The Data should be free of tampering, we wouldnt want if someone can get inside your database of let's say hospital change vital fields like Blood group, Organ Donor, Past illnesses, Allergies, etc. these can be fatal and endangering a patients life.
