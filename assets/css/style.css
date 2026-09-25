@@ -219,6 +219,13 @@ body {
     color: var(--accent);
 }
 
+.path-prompt {
+    font-family: var(--font-ui) !important;
+    font-weight: 400 !important;
+    color: var(--text-muted);
+    letter-spacing: normal;
+}
+
 /* --- 5. Main Content Container (The Drafting Column) --- */
 
 #content-bridge {
