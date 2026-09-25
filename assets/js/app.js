@@ -149,8 +149,7 @@ async function router() {
 async function renderPostList(posts) {
     document.title = "beeth73 | ~/posts";
     
-    let htmlBuilder = `<h1>~/posts</h1><ul style="list-style: none; padding: 0;">`;
-    
+    let htmlBuilder = `<h1><span class="path-prompt">~/</span>posts</h1><ul style="list-style: none; padding: 0;">`;
     // Sort posts: Newest date first!
     const sortedPosts = [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
 
