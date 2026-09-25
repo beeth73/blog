@@ -151,7 +151,10 @@ async function renderPostList(posts) {
     
     let htmlBuilder = `<h1>~/posts</h1><ul style="list-style: none; padding: 0;">`;
     
-    posts.forEach(post => {
+    // Sort posts: Newest date first!
+    const sortedPosts = [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    sortedPosts.forEach(post => {
         // Formats date nicely
         const date = new Date(post.date).toLocaleDateString('en-US', {
             year: 'numeric', month: 'short', day: 'numeric'
@@ -173,6 +176,7 @@ async function renderPostList(posts) {
     htmlBuilder += `</ul>`;
     renderHTML(htmlBuilder);
 }
+
 
 async function renderPost(slug, posts) {
     const post = posts.find(p => p.id === slug);
