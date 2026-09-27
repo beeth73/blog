@@ -5,7 +5,7 @@ In those days, we really believed that to be the world's one and only truth."
 
 I think everyone who watched Fullmetal Alchemist has this quote spoken by Alphonse Elric in the intro ingrained in their minds, but as Al says "In those days" it does get debunked.
 
-![Poster of Fullmetal Alchemist containing Edward and Alphonse,](assets/images/FMA_Poster.jpg)
+![Poster of Fullmetal Alchemist containing Edward and Alphonse](assets/images/FMA_Poster.jpg)
 
 
 If you are curious about this then head to the following which is also source of this image [imdb.com](https://www.imdb.com/title/tt0421357/mediaviewer/rm1374488833/?ref_=tt_ov_i)

@@ -1,6 +1,14 @@
 {
   "posts": [
     {
+      "id": "napolean",
+      "title": "Napoleon: The Man Who Ceased to Be Human",
+      "date": "2026-09-27",
+      "description": "An exploration of Napoleon Bonaparte's life — the myth, the man, and everything between Toulon and St. Helena.",
+      "path": "posts/napoleon.md"
+    },
+
+    {
       "id": "cia-triad",
       "title": "CIA Triad",
       "date": "2026-07-22",

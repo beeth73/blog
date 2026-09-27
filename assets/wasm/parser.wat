@@ -1,6 +1,20 @@
 ;; ==========================================================================
 ;; BEETH73 // WASM ENGINE
-;; Production-Grade State-Machine Markdown Compiler (v3)
+;; Production-Grade State-Machine Markdown Compiler (v4)
+;;
+;; New in v4:
+;;   - Multi-level headers: # through ###### (h1-h6). v3 only supported h1;
+;;     the JS post-processing layer (postProcessInlineMarkdown) doesn't
+;;     touch headers at all, so this was a genuine gap only WASM could fill.
+;;   - Leading whitespace before line-start tokens (headers, quotes, hr,
+;;     bullets, code fences) is now tolerated: indentation no longer
+;;     blocks detection.
+;;
+;; NOTE: Images, links, and single-asterisk italics are intentionally NOT
+;; handled here. Per wasm_loader.js, those are handled downstream by
+;; postProcessInlineMarkdown() using native JS regex, after this parser's
+;; output. Duplicating that logic here would create two independent
+;; implementations of the same rules that could drift out of sync.
 ;; ==========================================================================
 
 (module
@@ -8,18 +22,29 @@
   (import "env" "sys_log" (func $sys_log (param i32)))
 
   (func $parse (export "parse") (param $in_ptr i32) (param $in_len i32) (result i32)
-    
+
     ;; Register allocation
     (local $in_curr i32)          ;; Read cursor
     (local $out_curr i32)         ;; Write cursor
     (local $byte i32)             ;; Current active byte
-    (local $is_at_line_start i32) ;; State: 1 = Start of line
-    (local $in_h1 i32)            ;; State: 1 = Inside H1
+    (local $is_at_line_start i32) ;; State: 1 = Start of line (leading whitespace allowed)
+    (local $heading_level i32)    ;; State: 0 = not in heading, else 1-6
     (local $in_quote i32)         ;; State: 1 = Inside Blockquote
     (local $in_code i32)          ;; State: 1 = Inside Pre/Code Block
     (local $in_bold i32)          ;; State: 1 = Inside Bold (**)
+    (local $in_italic i32)        ;; State: 1 = Inside Italic (*)
     (local $in_inline_code i32)   ;; State: 1 = Inside Inline Code (`)
     (local $in_bold_italic i32)   ;; State: 1 = Inside Bold-Italic (***)
+
+    ;; Scratch locals for multi-char lookahead (headers, links)
+    (local $hcount i32)
+    (local $scan i32)
+    (local $scan2 i32)
+    (local $text_start i32)
+    (local $text_end i32)
+    (local $url_start i32)
+    (local $url_end i32)
+    (local $link_ok i32)
 
     ;; Initialize pointers
     local.get $in_ptr
@@ -30,10 +55,11 @@
 
     ;; Set initial states
     i32.const 1   local.set $is_at_line_start
-    i32.const 0   local.set $in_h1
+    i32.const 0   local.set $heading_level
     i32.const 0   local.set $in_quote
     i32.const 0   local.set $in_code
     i32.const 0   local.set $in_bold
+    i32.const 0   local.set $in_italic
     i32.const 0   local.set $in_inline_code
     i32.const 0   local.set $in_bold_italic
 
@@ -42,7 +68,7 @@
     ;; =========================================================
     (block $exit_loop
       (loop $process_chars
-        
+
         ;; EOF check
         local.get $in_curr
         local.get $in_len
@@ -53,6 +79,35 @@
         local.get $in_curr
         i32.load8_u
         local.set $byte
+
+        ;; ---------------------------------------------------------
+        ;; RULE 0: Leading whitespace at line start.
+        ;; Pass spaces/tabs through untouched but KEEP is_at_line_start
+        ;; set, so indented headers/quotes/hr/bullets/fences still fire.
+        ;; ---------------------------------------------------------
+        local.get $is_at_line_start
+        (if
+          (then
+            local.get $byte
+            i32.const 32 ;; ' '
+            i32.eq
+            local.get $byte
+            i32.const 9  ;; '\t'
+            i32.eq
+            i32.or
+            (if
+              (then
+                local.get $out_curr
+                local.get $byte
+                i32.store8
+
+                local.get $in_curr  i32.const 1  i32.add  local.set $in_curr
+                local.get $out_curr i32.const 1  i32.add  local.set $out_curr
+                br $process_chars
+              )
+            )
+          )
+        )
 
         ;; ---------------------------------------------------------
         ;; RULE 1: Code Block Toggle (```) at line start
@@ -161,7 +216,8 @@
         )
 
         ;; ---------------------------------------------------------
-        ;; RULE 2: Detect Header Start ("# ") - Only outside code
+        ;; RULE 2: Detect Header Start ("#" x1-6, then " ") - Only
+        ;; outside code. Supports h1 through h6.
         ;; ---------------------------------------------------------
         local.get $is_at_line_start
         local.get $byte
@@ -173,21 +229,73 @@
         i32.and
         (if
           (then
-            ;; Lookahead: Space (32)
-            local.get $in_curr  i32.const 1  i32.add  local.get $in_len  i32.lt_u
+            ;; Count consecutive '#' characters, up to 6, without
+            ;; consuming input yet (use $scan as a lookahead cursor).
+            local.get $in_curr
+            local.set $scan
+            i32.const 0
+            local.set $hcount
+
+            (block $exit_hcount
+              (loop $hcount_loop
+                local.get $scan
+                local.get $in_len
+                i32.ge_u
+                br_if $exit_hcount
+
+                local.get $hcount
+                i32.const 6
+                i32.ge_u
+                br_if $exit_hcount
+
+                local.get $scan
+                i32.load8_u
+                i32.const 35 ;; '#'
+                i32.ne
+                br_if $exit_hcount
+
+                local.get $scan  i32.const 1  i32.add  local.set $scan
+                local.get $hcount i32.const 1 i32.add  local.set $hcount
+                br $hcount_loop
+              )
+            )
+
+            ;; Valid header only if the run of '#' is immediately
+            ;; followed by a space.
+            local.get $scan
+            local.get $in_len
+            i32.lt_u
             (if (result i32)
-              (then local.get $in_curr  i32.const 1  i32.add  i32.load8_u  i32.const 32  i32.eq)
-              (else i32.const 0)
+              (then
+                local.get $scan
+                i32.load8_u
+                i32.const 32
+                i32.eq
+              )
+              (else
+                i32.const 0
+              )
             )
             (if
               (then
-                local.get $in_curr  i32.const 2  i32.add  local.set $in_curr
+                ;; Consume the '#'s and the single following space
+                local.get $scan
+                i32.const 1
+                i32.add
+                local.set $in_curr
+
+                ;; Write "<h" + digit
                 local.get $out_curr  i32.const 60  i32.store8 ;; <
                 local.get $out_curr  i32.const 1  i32.add  i32.const 104 i32.store8 ;; h
-                local.get $out_curr  i32.const 2  i32.add  i32.const 49  i32.store8 ;; 1
+                local.get $out_curr  i32.const 2  i32.add
+                i32.const 48
+                local.get $hcount
+                i32.add
+                i32.store8 ;; '0'+hcount => '1'..'6'
                 local.get $out_curr  i32.const 3  i32.add  i32.const 62  i32.store8 ;; >
+
                 local.get $out_curr  i32.const 4  i32.add  local.set $out_curr
-                i32.const 1  local.set $in_h1
+                local.get $hcount  local.set $heading_level
                 i32.const 0  local.set $is_at_line_start
                 br $process_chars
               )
@@ -248,7 +356,6 @@
         i32.and
         (if
           (then
-            ;; Lookahead: Check if next two bytes are also '-'
             local.get $in_curr  i32.const 2  i32.add  local.get $in_len  i32.lt_u
             (if (result i32)
               (then
@@ -286,7 +393,6 @@
         i32.and
         (if
           (then
-            ;; Lookahead: Space (32)
             local.get $in_curr  i32.const 1  i32.add  local.get $in_len  i32.lt_u
             (if (result i32)
               (then local.get $in_curr  i32.const 1  i32.add  i32.load8_u  i32.const 32  i32.eq)
@@ -344,7 +450,7 @@
                     local.get $in_bold_italic
                     (if
                       (then
-                        ;; Close: "</em></strong>" (13 bytes)
+                        ;; Close: "</em></strong>" (14 bytes)
                         local.get $out_curr  i32.const 60  i32.store8 ;; <
                         local.get $out_curr  i32.const 1  i32.add i32.const 47  i32.store8 ;; /
                         local.get $out_curr  i32.const 2  i32.add i32.const 101 i32.store8 ;; e
@@ -478,17 +584,23 @@
         i32.eq
         (if
           (then
-            ;; Case A: Close H1 if open
-            local.get $in_h1
+            ;; Case A: Close heading if open (any level 1-6)
+            local.get $heading_level
+            i32.const 0
+            i32.gt_u
             (if
               (then
                 local.get $out_curr  i32.const 60  i32.store8 ;; <
                 local.get $out_curr  i32.const 1 i32.add i32.const 47  i32.store8 ;; /
                 local.get $out_curr  i32.const 2 i32.add i32.const 104 i32.store8 ;; h
-                local.get $out_curr  i32.const 3 i32.add i32.const 49  i32.store8 ;; 1
+                local.get $out_curr  i32.const 3 i32.add
+                i32.const 48
+                local.get $heading_level
+                i32.add
+                i32.store8 ;; '0'+level
                 local.get $out_curr  i32.const 4 i32.add i32.const 62  i32.store8 ;; >
                 local.get $out_curr  i32.const 5 i32.add  local.set $out_curr
-                i32.const 0  local.set $in_h1
+                i32.const 0  local.set $heading_level
               )
             )
 
@@ -513,17 +625,24 @@
                 i32.const 0  local.set $in_quote
               )
               (else
-                ;; Case C: If neither H1 nor Blockquote, AND we are NOT inside a code block,
+                ;; Case C: If neither heading nor Blockquote, AND we are NOT inside a code block,
                 ;; append "<br>" (4 bytes) so prose breaks nicely.
                 local.get $in_code
                 (if
                   (then)
                   (else
-                    local.get $out_curr  i32.const 60  i32.store8 ;; <
-                    local.get $out_curr  i32.const 1 i32.add i32.const 98  i32.store8 ;; b
-                    local.get $out_curr  i32.const 2 i32.add i32.const 114 i32.store8 ;; r
-                    local.get $out_curr  i32.const 3 i32.add i32.const 62  i32.store8 ;; >
-                    local.get $out_curr  i32.const 4 i32.add  local.set $out_curr
+                    local.get $heading_level
+                    i32.const 0
+                    i32.eq
+                    (if
+                      (then
+                        local.get $out_curr  i32.const 60  i32.store8 ;; <
+                        local.get $out_curr  i32.const 1 i32.add i32.const 98  i32.store8 ;; b
+                        local.get $out_curr  i32.const 2 i32.add i32.const 114 i32.store8 ;; r
+                        local.get $out_curr  i32.const 3 i32.add i32.const 62  i32.store8 ;; >
+                        local.get $out_curr  i32.const 4 i32.add  local.set $out_curr
+                      )
+                    )
                   )
                 )
               )
