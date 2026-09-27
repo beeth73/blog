@@ -136,9 +136,18 @@ async function router() {
         if (viewList === 'all') {
             await renderPostList(sitemap.posts);
         } else if (postSlug) {
-            await renderPost(postSlug, sitemap.posts);
+            // ✨ DYNAMIC LATEST ROUTE
+            if (postSlug === 'latest') {
+                if (!sitemap.posts || sitemap.posts.length === 0) {
+                    throw new Error("No posts indexed in sitemap.");
+                }
+                const sorted = [...sitemap.posts].sort((a, b) => new Date(b.date) - new Date(a.date));
+                await renderPost(sorted[0].id, sitemap.posts);
+            } else {
+                await renderPost(postSlug, sitemap.posts);
+            }
         } else {
-            // Default home view: Load home.md instead of the first post!
+            // Default home view: Load home.md
             await renderHome();
         }
     } catch (error) {
@@ -195,11 +204,7 @@ async function renderPost(slug, posts) {
     // (This calls the function we will write in wasm_loader.js)
     const htmlOutput = await parseMarkdownWasm(rawMarkdown);
     
-    // 3. Construct the final article DOM
-    const date = new Date(post.date).toLocaleDateString('en-US', {
-        year: 'numeric', month: 'long', day: 'numeric'
-    });
-
+    // 3. Construct the final article DOM with a back link at the bottom
     const finalDOM = `
         <article>
             <header style="margin-bottom: 3rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem;">
@@ -211,6 +216,10 @@ async function renderPost(slug, posts) {
             <div class="markdown-body">
                 ${htmlOutput}
             </div>
+            <!-- ✨ End-of-article exit navigation -->
+            <footer style="margin-top: 4rem; padding-top: 1.5rem; border-top: 1px dashed var(--border-color); font-family: var(--font-ui); font-size: 0.85rem;">
+                <a href="?list=all" style="color: var(--accent); text-decoration: none; border-bottom: 1px dotted var(--accent);">&larr; ~/posts (back to archive)</a>
+            </footer>
         </article>
     `;
 
