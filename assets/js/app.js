@@ -192,18 +192,19 @@ async function renderPost(slug, posts) {
 
     document.title = `${post.title} | beeth73`;
 
-    // 1. Fetch the raw markdown string
-
-    // Senior-engineer touch: Strip the first title line (e.g., # Title) from the markdown body
-    // to prevent duplicate rendering, since we already render it in the header.
     // 1. Fetch and clean the raw markdown string in one chain
     const rawMarkdown = (await fetchRawMarkdown(post.path))
         .replace(/^#\s+.*$/m, '')
         .trim();
+
     // 2. Hand it off to the WASM Engine to process
-    // (This calls the function we will write in wasm_loader.js)
     const htmlOutput = await parseMarkdownWasm(rawMarkdown);
     
+    // ✨ ADD THIS MISSING LINE BACK:
+    const date = new Date(post.date).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+    });
+
     // 3. Construct the final article DOM with a back link at the bottom
     const finalDOM = `
         <article>
