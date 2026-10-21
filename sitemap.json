@@ -1,6 +1,14 @@
 {
   "posts": [
     {
+      "id": "headless-kali-mac",
+      "title": "Headless Kali on a Mac: How I Stopped Carrying Two Laptops",
+      "date": "2026-10-22",
+      "description": "A travelogue and engineering journey of turning an encrypted Kali Linux laptop into an always-on headless workstation accessed from macOS with zero open ports.",
+      "path": "posts/headless-kali-mac.md"
+    },
+
+    {
       "id": "napoleon",
       "title": "Napoleon: The Man Who Ceased to Be Human",
       "date": "2026-09-27",
@@ -9,19 +17,19 @@
     },
 
     {
-      "id": "cia-triad",
-      "title": "CIA Triad",
-      "date": "2026-07-22",
-      "description": "An introductory summary of the core pillars of cybersecurity, expanded with Authentication and Non-Repudiation.",
-      "path": "posts/cia_triad.md"
-    },
-
-    {
       "id": "fullmetal-alchemist-review",
       "title": "FullMetal Alchemist (2003) Review",
       "date": "2026-09-21",
       "description": "A review of Fullmetal Alchemist (2003)",
       "path": "posts/fma.md"
+    },
+
+    {
+      "id": "cia-triad",
+      "title": "CIA Triad",
+      "date": "2026-07-22",
+      "description": "An introductory summary of the core pillars of cybersecurity, expanded with Authentication and Non-Repudiation.",
+      "path": "posts/cia_triad.md"
     }
   ]
 }

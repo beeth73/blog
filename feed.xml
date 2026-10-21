@@ -6,19 +6,26 @@
     <link>https://blog.bhushanladgaonkar.me</link>
     <description>Writing corner by Bhushan Ladgaonkar (Beeth73) — Systems, tech, automotive, and art.</description>
     <language>en-us</language>
-    <lastBuildDate>Mon, 21 Sep 2026 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 22 Oct 2026 00:00:00 GMT</lastBuildDate>
     <atom:link href="https://blog.bhushanladgaonkar.me/feed.xml" rel="self" type="application/rss+xml" />
 
-
-    <!-- Post 3: FullMetal Alchemist (2003) Review -->
+    <!-- Post 4: Headless Kali -->
     <item>
-      <title>Napoleon: The Man Who Ceased to Be Humanw</title>
+      <title>Headless Kali on a Mac: How I Stopped Carrying Two Laptops</title>
+      <link>https://blog.bhushanladgaonkar.me/?post=headless-kali-mac</link>
+      <guid isPermaLink="true">https://blog.bhushanladgaonkar.me/?post=headless-kali-mac</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 GMT</pubDate>
+      <description>A travelogue and engineering journey of turning an encrypted Kali Linux laptop into an always-on headless workstation accessed from macOS with zero open ports.</description>
+    </item>
+
+    <!-- Post 3: Napoleon -->
+    <item>
+      <title>Napoleon: The Man Who Ceased to Be Human</title>
       <link>https://blog.bhushanladgaonkar.me/?post=napoleon</link>
       <guid isPermaLink="true">https://blog.bhushanladgaonkar.me/?post=napoleon</guid>
       <pubDate>Mon, 27 Sep 2026 16:15:00 GMT</pubDate>
       <description>An exploration of Napoleon Bonaparte's life — the myth, the man, and everything between Toulon and St. Helena.</description>
     </item>
-
 
     <!-- Post 2: FullMetal Alchemist (2003) Review -->
     <item>
